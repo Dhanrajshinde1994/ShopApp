@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".InsertProductActivity">
+
+<include
+    android:id="@+id/apptoolbar"
+    layout="@layout/toolbar"
+    />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            >
+
+            <EditText
+                android:id="@+id/etPName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/text16spblack"
+                android:inputType="text"
+                android:layout_marginTop="5dp"
+                android:hint="@string/str_product_name"
+                />
+
+            <EditText
+                android:id="@+id/etPPrice"
+                android:inputType="numberDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/text16spblack"
+                android:layout_marginTop="5dp"
+                android:hint="@string/strProductPrice"
+                />
+            <Spinner
+                android:id="@+id/spPUnit"
+                android:inputType="numberDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                style="@style/text16spblack"
+                android:layout_marginTop="5dp"
+                android:hint="@string/strProductUnit"
+                />
+
+            <EditText
+                android:id="@+id/etMfgDate"
+                android:inputType="none"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/text16spblack"
+                android:layout_marginTop="5dp"
+                android:hint="@string/strProductMfgDate"
+               android:focusableInTouchMode="false"
+                />
+
+            <EditText
+                android:id="@+id/etExpDate"
+                android:inputType="none"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/text16spblack"
+                android:layout_marginTop="5dp"
+                android:hint="@string/strProductExpDate"
+               android:focusableInTouchMode="false"
+                />
+            <EditText
+                android:visibility="gone"
+                android:id="@+id/etBestBeforeDate"
+                android:inputType="number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/text16spblack"
+                android:layout_marginTop="5dp"
+                android:hint="@string/strBestBbefore"
+                />
+
+
+
+
+            <Button
+                android:id="@+id/btnAdd"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                style="@style/text20spblack"
+                android:textColor="@color/white"
+                android:text="@string/strAdd"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                />
+
+
+        </LinearLayout>
+
+<androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/rvProductDetail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="none"
+    android:layout_marginTop="@dimen/_5sdp"
+    />
+
+    </LinearLayout>
+
+
+</LinearLayout>

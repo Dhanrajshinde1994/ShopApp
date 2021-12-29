@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">ShopApp</string>
+    <string name="strAddProduct">Add Product</string>
+
+
+    <string name="strToolbarTitle">Toolbar TItle</string>
+    <string name="str_product_name">Product Name</string>
+    <string name="strProductPrice">Product Price</string>
+    <string name="strProductUnit">Product Unit</string>
+    <string name="strProductExpDate">Expire Date</string>
+    <string name="strSubmit">Submit</string>
+    <string name="strAdd">Add</string>
+    <string name="strProductMfgDate">Mfg Date</string>
+    <string name="strBestBbefore">Best Before In Months</string>
+    <string name="strStore">Store</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="noInternetConnectionAvailable">No Internet Connection Available</string>
+    <string name="str_loading">"Loading . . "</string>
+    <string name="str_internet_connection">No Internet Connection</string>
+    <string name="strPleaseAddProductName">Please Add Product Name</string>
+    <string name="strPleaseAddProductPrice">Please Add Product Price</string>
+    <string name="strPleaseAddProductQuant">Please Add Product Quantity</string>
+    <string name="str_product_barcode">Barcode</string>
+    <string name="strProductQuantity">Quantity</string>
+    <string name="strProductPresent">Product Already Present</string>
+</resources>
