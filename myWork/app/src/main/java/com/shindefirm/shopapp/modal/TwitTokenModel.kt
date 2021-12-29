@@ -1,67 +1,50 @@
-package com.shindefirm.shopapp.modal;
+package com.shindefirm.shopapp.modal
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
+import android.os.Parcel
+import android.os.Parcelable.Creator
+import com.shindefirm.shopapp.modal.TwitTokenModel
 
-import com.google.gson.annotations.SerializedName;
-
-public class TwitTokenModel implements Parcelable {
+class TwitTokenModel : Parcelable {
     @SerializedName("TokenName")
-    private String tokenName;
+    var tokenName: String?
+
     @SerializedName("TokenValue")
-    private String tokenValue;
+    var tokenValue: String
 
-    public TwitTokenModel(String tokenName, String tokenValue) {
-        this.tokenName = tokenName;
-        this.tokenValue = tokenValue;
+    constructor(tokenName: String?, tokenValue: String) {
+        this.tokenName = tokenName
+        this.tokenValue = tokenValue
     }
 
-    protected TwitTokenModel(Parcel in) {
-        tokenName = in.readString();
-        tokenValue = in.readString();
+    protected constructor(`in`: Parcel) {
+        tokenName = `in`.readString()
+        tokenValue = `in`.readString()!!
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(tokenName);
-        dest.writeString(tokenValue);
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeString(tokenName)
+        dest.writeString(tokenValue)
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    override fun describeContents(): Int {
+        return 0
     }
 
-    public static final Creator<TwitTokenModel> CREATOR = new Creator<TwitTokenModel>() {
-        @Override
-        public TwitTokenModel createFromParcel(Parcel in) {
-            return new TwitTokenModel(in);
+    override fun toString(): String {
+        return tokenValue
+    }
+
+    companion object {
+        val CREATOR: Creator<TwitTokenModel> = object : Creator<TwitTokenModel?> {
+            override fun createFromParcel(`in`: Parcel): TwitTokenModel? {
+                return TwitTokenModel(`in`)
+            }
+
+            override fun newArray(size: Int): Array<TwitTokenModel?> {
+                return arrayOfNulls(size)
+            }
         }
-
-        @Override
-        public TwitTokenModel[] newArray(int size) {
-            return new TwitTokenModel[size];
-        }
-    };
-
-    public String getTokenName() {
-        return tokenName;
-    }
-
-    public void setTokenName(String tokenName) {
-        this.tokenName = tokenName;
-    }
-
-    public String getTokenValue() {
-        return tokenValue;
-    }
-
-    public void setTokenValue(String tokenValue) {
-        this.tokenValue = tokenValue;
-    }
-
-    @Override
-    public String toString() {
-        return tokenValue;
     }
 }

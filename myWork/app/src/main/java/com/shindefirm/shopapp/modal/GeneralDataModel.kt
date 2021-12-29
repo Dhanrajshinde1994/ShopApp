@@ -1,149 +1,105 @@
-package com.shindefirm.shopapp.modal;
+package com.shindefirm.shopapp.modal
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
+import com.shindefirm.shopapp.modal.GeneralSettingModel
+import com.shindefirm.shopapp.modal.CategoryModel
+import com.shindefirm.shopapp.modal.PartyDataModel
+import com.shindefirm.shopapp.modal.SliderImageModel
+import com.shindefirm.shopapp.modal.ProgramModel
+import com.shindefirm.shopapp.modal.TwitTokenModel
+import android.os.Parcel
+import android.os.Parcelable.Creator
+import com.shindefirm.shopapp.modal.GeneralDataModel
+import java.util.ArrayList
 
-import com.google.gson.annotations.SerializedName;
-
-import java.util.ArrayList;
-
-public class GeneralDataModel implements Parcelable {
+class GeneralDataModel : Parcelable {
     @SerializedName("data")
-    private String dataState;
+    var dataState: String?
+
     @SerializedName("data1")
-    private ArrayList<GeneralSettingModel> generalSettingList;
+    var generalSettingList: ArrayList<GeneralSettingModel?>?
+
     @SerializedName("data2")
-    private ArrayList<CategoryModel> categoryList;
+    var categoryList: ArrayList<CategoryModel?>?
+
     @SerializedName("data3")
-    private ArrayList<PartyDataModel> partyDataList;
-//    @SerializedName("data4")
-    private ArrayList<SliderImageModel> sliderImageList;
+    var partyDataList: ArrayList<PartyDataModel?>?
+
+    //    @SerializedName("data4")
+    var sliderImageList: ArrayList<SliderImageModel?>?
+
     @SerializedName("data4")
-    private ArrayList<ProgramModel> programModelList;
+    var programModelList: ArrayList<ProgramModel?>?
+
     @SerializedName("data5")
-    private ArrayList<TwitTokenModel> twitTokenModelArrayList;
+    var twitTokenModelArrayList: ArrayList<TwitTokenModel>?
 
-    public GeneralDataModel() {
-        dataState = "";
-        generalSettingList = new ArrayList<>();
-        categoryList = new ArrayList<>();
-        partyDataList = new ArrayList<>();
-        sliderImageList = new ArrayList<>();
-        programModelList = new ArrayList<>();
-        twitTokenModelArrayList=new ArrayList<>();
+    constructor() {
+        dataState = ""
+        generalSettingList = ArrayList()
+        categoryList = ArrayList()
+        partyDataList = ArrayList()
+        sliderImageList = ArrayList()
+        programModelList = ArrayList()
+        twitTokenModelArrayList = ArrayList()
     }
 
-    public GeneralDataModel(String dataState, ArrayList<GeneralSettingModel> generalSettingList,
-                            ArrayList<CategoryModel> categoryList,
-                            ArrayList<PartyDataModel> partyDataList,
-                            ArrayList<SliderImageModel> sliderImageList,
-                            ArrayList<ProgramModel> programModelList,
-                            ArrayList<TwitTokenModel> twitTokenModelArrayList) {
-        this.dataState = dataState;
-        this.generalSettingList = generalSettingList;
-        this.categoryList = categoryList;
-        this.partyDataList = partyDataList;
-        this.sliderImageList = sliderImageList;
-        this.programModelList = programModelList;
-        this.twitTokenModelArrayList = twitTokenModelArrayList;
+    constructor(
+        dataState: String?, generalSettingList: ArrayList<GeneralSettingModel?>?,
+        categoryList: ArrayList<CategoryModel?>?,
+        partyDataList: ArrayList<PartyDataModel?>?,
+        sliderImageList: ArrayList<SliderImageModel?>?,
+        programModelList: ArrayList<ProgramModel?>?,
+        twitTokenModelArrayList: ArrayList<TwitTokenModel>?
+    ) {
+        this.dataState = dataState
+        this.generalSettingList = generalSettingList
+        this.categoryList = categoryList
+        this.partyDataList = partyDataList
+        this.sliderImageList = sliderImageList
+        this.programModelList = programModelList
+        this.twitTokenModelArrayList = twitTokenModelArrayList
     }
 
-    protected GeneralDataModel(Parcel in) {
-        dataState = in.readString();
-        generalSettingList = in.createTypedArrayList(GeneralSettingModel.CREATOR);
-        categoryList = in.createTypedArrayList(CategoryModel.CREATOR);
-        partyDataList = in.createTypedArrayList(PartyDataModel.CREATOR);
-        sliderImageList = in.createTypedArrayList(SliderImageModel.CREATOR);
-        programModelList = in.createTypedArrayList(ProgramModel.CREATOR);
-        twitTokenModelArrayList = in.createTypedArrayList(TwitTokenModel.CREATOR);
+    protected constructor(`in`: Parcel) {
+        dataState = `in`.readString()
+        generalSettingList = `in`.createTypedArrayList(GeneralSettingModel.CREATOR)
+        categoryList = `in`.createTypedArrayList(CategoryModel.CREATOR)
+        partyDataList = `in`.createTypedArrayList(PartyDataModel.CREATOR)
+        sliderImageList = `in`.createTypedArrayList(SliderImageModel.CREATOR)
+        programModelList = `in`.createTypedArrayList(ProgramModel.CREATOR)
+        twitTokenModelArrayList = `in`.createTypedArrayList(TwitTokenModel.CREATOR)
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(dataState);
-        dest.writeTypedList(generalSettingList);
-        dest.writeTypedList(categoryList);
-        dest.writeTypedList(partyDataList);
-        dest.writeTypedList(sliderImageList);
-        dest.writeTypedList(programModelList);
-        dest.writeTypedList(twitTokenModelArrayList);
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeString(dataState)
+        dest.writeTypedList(generalSettingList)
+        dest.writeTypedList(categoryList)
+        dest.writeTypedList(partyDataList)
+        dest.writeTypedList(sliderImageList)
+        dest.writeTypedList(programModelList)
+        dest.writeTypedList(twitTokenModelArrayList)
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    override fun describeContents(): Int {
+        return 0
     }
 
-    public static final Creator<GeneralDataModel> CREATOR = new Creator<GeneralDataModel>() {
-        @Override
-        public GeneralDataModel createFromParcel(Parcel in) {
-            return new GeneralDataModel(in);
+    override fun toString(): String {
+        return twitTokenModelArrayList!![0].tokenValue
+    }
+
+    companion object {
+        @JvmField
+        val CREATOR: Creator<GeneralDataModel?> = object : Creator<GeneralDataModel?> {
+            override fun createFromParcel(`in`: Parcel): GeneralDataModel? {
+                return GeneralDataModel(`in`)
+            }
+
+            override fun newArray(size: Int): Array<GeneralDataModel?> {
+                return arrayOfNulls(size)
+            }
         }
-
-        @Override
-        public GeneralDataModel[] newArray(int size) {
-            return new GeneralDataModel[size];
-        }
-    };
-
-    public String getDataState() {
-        return dataState;
-    }
-
-    public void setDataState(String dataState) {
-        this.dataState = dataState;
-    }
-
-    public ArrayList<GeneralSettingModel> getGeneralSettingList() {
-        return generalSettingList;
-    }
-
-    public void setGeneralSettingList(ArrayList<GeneralSettingModel> generalSettingList) {
-        this.generalSettingList = generalSettingList;
-    }
-
-    public ArrayList<CategoryModel> getCategoryList() {
-        return categoryList;
-    }
-
-    public void setCategoryList(ArrayList<CategoryModel> categoryList) {
-        this.categoryList = categoryList;
-    }
-
-    public ArrayList<PartyDataModel> getPartyDataList() {
-        return partyDataList;
-    }
-
-    public void setPartyDataList(ArrayList<PartyDataModel> partyDataList) {
-        this.partyDataList = partyDataList;
-    }
-
-    public ArrayList<SliderImageModel> getSliderImageList() {
-        return sliderImageList;
-    }
-
-    public void setSliderImageList(ArrayList<SliderImageModel> sliderImageList) {
-        this.sliderImageList = sliderImageList;
-    }
-
-    public ArrayList<ProgramModel> getProgramModelList() {
-        return programModelList;
-    }
-
-    public void setProgramModelList(ArrayList<ProgramModel> programModelList) {
-        this.programModelList = programModelList;
-    }
-
-    public ArrayList<TwitTokenModel> getTwitTokenModelArrayList() {
-        return twitTokenModelArrayList;
-    }
-
-    public void setTwitTokenModelArrayList(ArrayList<TwitTokenModel> twitTokenModelArrayList) {
-        this.twitTokenModelArrayList = twitTokenModelArrayList;
-    }
-
-    @Override
-    public String toString() {
-        return twitTokenModelArrayList.get(0).getTokenValue();
     }
 }

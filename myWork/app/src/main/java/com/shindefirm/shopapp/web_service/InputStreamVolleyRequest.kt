@@ -1,45 +1,43 @@
-package com.shindefirm.shopapp.web_service;
+package com.shindefirm.shopapp.web_service
 
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.toolbox.HttpHeaderParser;
+import kotlin.Throws
+import com.android.volley.AuthFailureError
+import com.android.volley.NetworkResponse
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.HttpHeaderParser
+import java.util.HashMap
 
-import java.util.HashMap;
-import java.util.Map;
+class InputStreamVolleyRequest(
+    method: Int, mUrl: String?, listener: Response.Listener<ByteArray>,
+    errorListener: Response.ErrorListener?, params: HashMap<String, String>
+) : Request<ByteArray>(method, mUrl, errorListener) {
+    private val mListener: Response.Listener<ByteArray>
 
-public class InputStreamVolleyRequest extends Request<byte[]> {
-    private final Response.Listener<byte[]> mListener;
     //create a static map for directly accessing headers
-    public Map<String, String> responseHeaders;
-    private final Map<String, String> mParams;
-
-    public InputStreamVolleyRequest(int method, String mUrl, Response.Listener<byte[]> listener,
-                                    Response.ErrorListener errorListener, HashMap<String, String> params) {
-        super(method, mUrl, errorListener);
-        // this request would never use cache.
-        setShouldCache(false);
-        mListener = listener;
-        mParams = params;
+    var responseHeaders: Map<String, String>? = null
+    private val mParams: Map<String, String>
+    @Throws(AuthFailureError::class)
+    override fun getParams(): Map<String, String>? {
+        return mParams
     }
 
-    @Override
-    protected Map<String, String> getParams()
-            throws com.android.volley.AuthFailureError {
-        return mParams;
+    override fun deliverResponse(response: ByteArray) {
+        mListener.onResponse(response)
     }
 
-    @Override
-    protected void deliverResponse(byte[] response) {
-        mListener.onResponse(response);
-    }
-
-    @Override
-    protected Response<byte[]> parseNetworkResponse(NetworkResponse response) {
+    override fun parseNetworkResponse(response: NetworkResponse): Response<ByteArray> {
         //Initialise local responseHeaders map with response headers received
-        responseHeaders = response.headers;
+        responseHeaders = response.headers
 
         //Pass the response data here
-        return Response.success(response.data, HttpHeaderParser.parseCacheHeaders(response));
+        return Response.success(response.data, HttpHeaderParser.parseCacheHeaders(response))
+    }
+
+    init {
+        // this request would never use cache.
+        setShouldCache(false)
+        mListener = listener
+        mParams = params
     }
 }

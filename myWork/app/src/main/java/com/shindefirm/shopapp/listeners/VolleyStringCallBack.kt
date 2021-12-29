@@ -1,9 +1,6 @@
-package com.shindefirm.shopapp.listeners;
+package com.shindefirm.shopapp.listeners
 
-public interface VolleyStringCallBack {
-
-    void getResponseString(String dataString, String tag);
-
-    void getErrorString(String error);
-
+interface VolleyStringCallBack {
+    fun getResponseString(dataString: String?, tag: String?)
+    fun getErrorString(error: String?)
 }

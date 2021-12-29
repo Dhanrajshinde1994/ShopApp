@@ -1,20 +1,6 @@
-package com.shindefirm.shopapp.web_service;
+package com.shindefirm.shopapp.web_service
 
-
-
-
-
-
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
-import retrofit2.http.Url;
-
-
-public interface ApiInterface
-{
-
-   /* @GET("getNewsDetails_Mob")
+interface ApiInterface { /* @GET("getNewsDetails_Mob")
     Call<NewsDescriptionModel> getNewsDetails_Mob(@Query("NewsId") int NewsID, @Query("Userid") int Userid);
 
 
@@ -30,11 +16,10 @@ public interface ApiInterface
     @GET
     Call<RecentTweetIDResponse> get_Recent_Tweet_ID(@Url String url);
 */
-
-  /*  @GET("get_News_Notification_Data")
+    /*  @GET("get_News_Notification_Data")
     Call<NewsResponse> get_News_Notification_Data(@Query("userID") String userID, @Query("NewsId") String NewsId);
 */
-/*
+    /*
 
     @GET("getVehicleCurrentLocationAndInvoice_VTS_1_0")
     Call<Master_Single_Loc_Info> getVehicleCurrentLocationAndInvoice_VTS_1_0(@Query("UserId") String UserId, @Query("VehicleNo") String VehicleNo, @Query("DeviceId") String DeviceId, @Query("VehicleId") String VehicleId);
@@ -42,10 +27,7 @@ public interface ApiInterface
     @GET("getGPRSDataByDate_1_0")
     Call<Device_Info> getGPRSDataByDate_1_0(@Query("VehicleNo") String VehicleNo, @Query("Date") String Date);
 */
-
-
-
-  /*  @GET("getVehicleStatusCount_1_0")
+    /*  @GET("getVehicleStatusCount_1_0")
     Call<Device_Status_Master> getVehicleStatusCount_1_0(@Query("UserId") String UserId);
 
     @GET("getVTSSummaryReport_1_0")

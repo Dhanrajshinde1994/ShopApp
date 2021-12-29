@@ -1,5 +1,5 @@
-package com.shindefirm.shopapp.listeners;
+package com.shindefirm.shopapp.listeners
 
-public interface FunctionCall {
-    public void openDialog(int position);
+interface FunctionCall {
+    fun openDialog(position: Int)
 }

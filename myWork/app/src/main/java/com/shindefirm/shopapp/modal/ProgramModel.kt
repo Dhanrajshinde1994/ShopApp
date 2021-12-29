@@ -1,86 +1,63 @@
-package com.shindefirm.shopapp.modal;
+package com.shindefirm.shopapp.modal
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
+import android.os.Parcel
+import android.os.Parcelable.Creator
+import com.shindefirm.shopapp.modal.ProgramModel
 
-import com.google.gson.annotations.SerializedName;
-
-public class ProgramModel implements Parcelable {
+class ProgramModel : Parcelable {
     @SerializedName("Id")
-    private String id;
+    var id: String?
+
     @SerializedName("ProgramTitle")
-    private String programTitle;
+    var programTitle: String
+
     @SerializedName("ProgramDescription")
-    private String programDescription;
+    var programDescription: String?
 
-    public ProgramModel() {
-        this.id = "";
-        this.programTitle = "";
-        this.programDescription = "";
+    constructor() {
+        id = ""
+        programTitle = ""
+        programDescription = ""
     }
 
-    public ProgramModel(String id, String programTitle, String programDescription) {
-        this.id = id;
-        this.programTitle = programTitle;
-        this.programDescription = programDescription;
+    constructor(id: String?, programTitle: String, programDescription: String?) {
+        this.id = id
+        this.programTitle = programTitle
+        this.programDescription = programDescription
     }
 
-    protected ProgramModel(Parcel in) {
-        id = in.readString();
-        programTitle = in.readString();
-        programDescription = in.readString();
+    protected constructor(`in`: Parcel) {
+        id = `in`.readString()
+        programTitle = `in`.readString()!!
+        programDescription = `in`.readString()
     }
 
-    public static final Creator<ProgramModel> CREATOR = new Creator<ProgramModel>() {
-        @Override
-        public ProgramModel createFromParcel(Parcel in) {
-            return new ProgramModel(in);
+    override fun describeContents(): Int {
+        return hashCode()
+    }
+
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeString(id)
+        dest.writeString(programTitle)
+        dest.writeString(programDescription)
+    }
+
+    override fun toString(): String {
+        return programTitle
+    }
+
+    companion object {
+        @JvmField
+        val CREATOR: Creator<ProgramModel?> = object : Creator<ProgramModel?> {
+            override fun createFromParcel(`in`: Parcel): ProgramModel? {
+                return ProgramModel(`in`)
+            }
+
+            override fun newArray(size: Int): Array<ProgramModel?> {
+                return arrayOfNulls(size)
+            }
         }
-
-        @Override
-        public ProgramModel[] newArray(int size) {
-            return new ProgramModel[size];
-        }
-    };
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getProgramTitle() {
-        return programTitle;
-    }
-
-    public void setProgramTitle(String programTitle) {
-        this.programTitle = programTitle;
-    }
-
-    public String getProgramDescription() {
-        return programDescription;
-    }
-
-    public void setProgramDescription(String programDescription) {
-        this.programDescription = programDescription;
-    }
-
-    @Override
-    public int describeContents() {
-        return hashCode();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeString(programTitle);
-        dest.writeString(programDescription);
-    }
-
-    @Override
-    public String toString() {
-        return programTitle;
     }
 }

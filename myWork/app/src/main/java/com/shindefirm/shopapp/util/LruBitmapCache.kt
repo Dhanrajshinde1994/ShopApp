@@ -1,40 +1,30 @@
-package com.shindefirm.shopapp.util;
+package com.shindefirm.shopapp.util
 
-import android.graphics.Bitmap;
+import kotlin.jvm.JvmOverloads
+import com.shindefirm.shopapp.util.LruBitmapCache
+import android.graphics.Bitmap
+import androidx.collection.LruCache
+import com.android.volley.toolbox.ImageLoader
 
-import androidx.collection.LruCache;
-
-import com.android.volley.toolbox.ImageLoader;
-
-public class LruBitmapCache extends LruCache<String, Bitmap> implements
-        ImageLoader.ImageCache {
-    public LruBitmapCache() {
-        this(getDefaultLruCacheSize());
+class LruBitmapCache @JvmOverloads constructor(sizeInKiloBytes: Int = defaultLruCacheSize) :
+    LruCache<String?, Bitmap>(sizeInKiloBytes), ImageLoader.ImageCache {
+    protected fun sizeOf(key: String?, value: Bitmap): Int {
+        return value.rowBytes * value.height / 1024
     }
 
-    public LruBitmapCache(int sizeInKiloBytes) {
-        super(sizeInKiloBytes);
+    override fun getBitmap(url: String): Bitmap? {
+        return get(url)
     }
 
-    public static int getDefaultLruCacheSize() {
-        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-        final int cacheSize = maxMemory / 8;
-
-        return cacheSize;
+    override fun putBitmap(url: String, bitmap: Bitmap) {
+        put(url, bitmap)
     }
 
-    @Override
-    protected int sizeOf(String key, Bitmap value) {
-        return value.getRowBytes() * value.getHeight() / 1024;
-    }
-
-    @Override
-    public Bitmap getBitmap(String url) {
-        return get(url);
-    }
-
-    @Override
-    public void putBitmap(String url, Bitmap bitmap) {
-        put(url, bitmap);
+    companion object {
+        val defaultLruCacheSize: Int
+            get() {
+                val maxMemory = (Runtime.getRuntime().maxMemory() / 1024).toInt()
+                return maxMemory / 8
+            }
     }
 }

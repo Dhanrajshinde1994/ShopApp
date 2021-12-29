@@ -1,12 +1,11 @@
-package com.shindefirm.shopapp.listeners;
+package com.shindefirm.shopapp.listeners
 
-import android.widget.CompoundButton;
+import android.widget.CompoundButton
 
-public interface RecyclerListClickListener {
-    void onListItemClickListener(int position, Object holder, Object object);
-
-    void onSwitchCheckedChanged(CompoundButton buttonView, boolean isChecked,
-                                int position, Object object);
-
-
+interface RecyclerListClickListener {
+    fun onListItemClickListener(position: Int, holder: Any?, `object`: Any?)
+    fun onSwitchCheckedChanged(
+        buttonView: CompoundButton?, isChecked: Boolean,
+        position: Int, `object`: Any?
+    )
 }

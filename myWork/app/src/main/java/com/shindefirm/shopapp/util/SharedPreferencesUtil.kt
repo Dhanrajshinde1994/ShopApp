@@ -1,121 +1,119 @@
-package com.shindefirm.shopapp.util;
+package com.shindefirm.shopapp.util
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Context
+import com.shindefirm.shopapp.util.Logger.setLog
+import android.content.SharedPreferences
+import com.shindefirm.shopapp.util.SharedPreferencesUtil
 
-public class SharedPreferencesUtil {
-    private static final String SHARED_PREF_NAME = "NCP_Youth";
-    public static final String SET_LANGUAGE = "LANGUAGE";
-
-    public static final String KEY_MOBILENO = "mobileNo";
-    public static final String KEY_USERID = "userId";
-    public static final String KEY_NAME = "name";
-    public static final String KEY_FNAME = "fname";
-    public static final String KEY_MNAME = "mname";
-    public static final String KEY_LNAME = "lname";
-    public static final String KEY_EMAIL = "email";
-    public static final String KEY_DISTRICT_ID = "districtId";
-    public static final String KEY_KK_DISTRICT_ID = "kk_districtId";
-    public static final String KEY_TALUKA_ID = "talukaId";
-    public static final String KEY_KK_TALUKA_ID = "kk_talukaId";
-    public static final String KEY_VILLAGE_ID = "villageId";
-    public static final String KEY_KK_VILLAGE_ID = "kk_villageId";
-    public static final String KEY_CITY_ID = "cityId";
-    public static final String KEY_KK_CITY_ID = "kk_cityId";
-    public static final String KEY_STATE_ID = "stateId";
-    public static final String KEY_DISTRICT = "district";
-    public static final String KEY_TALUKA = "taluka";
-    public static final String KEY_VILLAGE = "village";
-    public static final String KEY_STATE = "state";
-    public static final String KEY_LOGIN_STATUS = "loginStatus";
-    public static final String KEY_APP_ID = "AppId";
-    public static final String KEY_ADDRESS = "address";
-    public static final String KEY_PROFILE_PHOTO = "profilePhoto";
-    public static final String KEY_FCM_TOKEN = "fcmToken";
-    public static final String KEY_ACTIVITY_ID = "C_ActivityId";
-    public static final String KEY_LOGIN_STATUS_STATE = "loginState";
-    public static final String KEY_IS_NEW = "isNew";
-    public static final String KEY_CONSTITUENCY_ID = "constituency";
-    public static final String KEY_CONSTITUENCY_NAME = "constituencyName";
-    public static final String KEY_RURAL_URBAN= "ruralUrban";
-    public static final String KEY_GENDER= "gender";
-    public static final String KEY_CITY_NAME = "cityName";
-    public static final String LOCAL_PROF_IMG = "localProfImg";
-    private final Context context;
-
-    public SharedPreferencesUtil(Context context) {
-        this.context = context;
+class SharedPreferencesUtil(private val context: Context) {
+    fun saveSharedPreferencesString(key: String, value: String) {
+        val settings = context.getSharedPreferences(SHARED_PREF_NAME, 0)
+        val editor = settings.edit()
+        editor.putString(key, value)
+        editor.apply()
+        setLog("Key: $key- Value:$value", Logger.LogEnum.INFORMATION)
     }
 
-    public void saveSharedPreferencesString(String key, String value) {
-        SharedPreferences settings = context.getSharedPreferences(SHARED_PREF_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString(key, value);
-        editor.apply();
-        Logger.setLog("Key: " + key + "- Value:" + value, Logger.LogEnum.INFORMATION);
+    fun fetchSharedPreferenesString(key: String, defaultValue: String?): String? {
+        val pref = context.getSharedPreferences(SHARED_PREF_NAME, 0)
+        val value = pref.getString(key, defaultValue)
+        setLog("Key: $key- Value:$value", Logger.LogEnum.INFORMATION)
+        return value
     }
 
-    public String fetchSharedPreferenesString(String key, String defaultValue) {
-        SharedPreferences pref = context.getSharedPreferences(SHARED_PREF_NAME, 0);
-        String value = pref.getString(key, defaultValue);
-       Logger.setLog("Key: " + key + "- Value:" + value, Logger.LogEnum.INFORMATION);
-        return value;
+    fun saveSharedPreferencesLong(key: String, value: Long) {
+        val settings = context.getSharedPreferences(SHARED_PREF_NAME, 0)
+        val editor = settings.edit()
+        editor.putLong(key, value)
+        editor.apply()
+        setLog("Key: $key- Value:$value", Logger.LogEnum.INFORMATION)
     }
 
-    public void saveSharedPreferencesLong(String key, long value) {
-        SharedPreferences settings = context.getSharedPreferences(SHARED_PREF_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putLong(key, value);
-        editor.apply();
-        Logger.setLog("Key: " + key + "- Value:" + value, Logger.LogEnum.INFORMATION);
+    fun fetchSharedPreferenesLong(key: String, defaultValue: Long): Long {
+        val pref = context.getSharedPreferences(SHARED_PREF_NAME, 0)
+        val value = pref.getLong(key, defaultValue)
+        setLog("Key: $key- Value:$value", Logger.LogEnum.INFORMATION)
+        return value
     }
 
-    public long fetchSharedPreferenesLong(String key, long defaultValue) {
-        SharedPreferences pref = context.getSharedPreferences(SHARED_PREF_NAME, 0);
-        long value = pref.getLong(key, defaultValue);
-        Logger.setLog("Key: " + key + "- Value:" + value, Logger.LogEnum.INFORMATION);
-        return value;
+    fun fetchSharedPreferenesBoolean(key: String, defaultValue: Boolean): Boolean {
+        val pref = context.getSharedPreferences(SHARED_PREF_NAME, 0)
+        val value = pref.getBoolean(key, defaultValue)
+        setLog("Key: $key- Value:$value", Logger.LogEnum.INFORMATION)
+        return value
     }
 
-    public boolean fetchSharedPreferenesBoolean(String key, boolean defaultValue) {
-        SharedPreferences pref = context.getSharedPreferences(SHARED_PREF_NAME, 0);
-        boolean value = pref.getBoolean(key, defaultValue);
-        Logger.setLog("Key: " + key + "- Value:" + value, Logger.LogEnum.INFORMATION);
-        return value;
+    fun saveSharedPreferencesBoolean(key: String, value: Boolean) {
+        val settings = context.getSharedPreferences(SHARED_PREF_NAME, 0)
+        val editor = settings.edit()
+        editor.putBoolean(key, value)
+        editor.apply()
+        setLog("Key: $key- Value:$value", Logger.LogEnum.INFORMATION)
     }
 
-    public void saveSharedPreferencesBoolean(String key, boolean value) {
-        SharedPreferences settings = context.getSharedPreferences(SHARED_PREF_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean(key, value);
-        editor.apply();
-        Logger.setLog("Key: " + key + "- Value:" + value, Logger.LogEnum.INFORMATION);
+    fun fetchSharedPreferenesInteger(key: String, defaultValue: Int): Int {
+        val pref = context.getSharedPreferences(SHARED_PREF_NAME, 0)
+        val value = pref.getInt(key, defaultValue)
+        setLog("Key: $key- Value:$value", Logger.LogEnum.INFORMATION)
+        return value
     }
 
-    public int fetchSharedPreferenesInteger(String key, int defaultValue) {
-        SharedPreferences pref = context.getSharedPreferences(SHARED_PREF_NAME, 0);
-        int value = pref.getInt(key, defaultValue);
-        Logger.setLog("Key: " + key + "- Value:" + value, Logger.LogEnum.INFORMATION);
-        return value;
+    fun saveSharedPreferencesInteger(key: String, value: Int) {
+        val settings = context.getSharedPreferences(SHARED_PREF_NAME, 0)
+        val editor = settings.edit()
+        editor.putInt(key, value)
+        editor.apply()
+        setLog("Key: $key- Value:$value", Logger.LogEnum.INFORMATION)
     }
 
-    public void saveSharedPreferencesInteger(String key, int value) {
-        SharedPreferences settings = context.getSharedPreferences(SHARED_PREF_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putInt(key, value);
-        editor.apply();
-        Logger.setLog("Key: " + key + "- Value:" + value, Logger.LogEnum.INFORMATION);
+    fun clearPreferences() {
+        val settings = context.getSharedPreferences(SHARED_PREF_NAME, 0)
+        val editor = settings.edit()
+        editor.clear()
+        editor.apply()
+        saveSharedPreferencesBoolean(KEY_LOGIN_STATUS, false)
+        saveSharedPreferencesString(KEY_IS_NEW, "")
+        saveSharedPreferencesString(KEY_LOGIN_STATUS_STATE, "")
+        //   saveSharedPreferencesString(SET_LANGUAGE,"");
+        setLog("Shared preferences values get cleared.", Logger.LogEnum.INFORMATION)
     }
 
-    public void clearPreferences() {
-        SharedPreferences settings = context.getSharedPreferences(SHARED_PREF_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.clear();
-        editor.apply();
-        saveSharedPreferencesBoolean(KEY_LOGIN_STATUS, false);
-        saveSharedPreferencesString(KEY_IS_NEW,"");
-        saveSharedPreferencesString(KEY_LOGIN_STATUS_STATE,"");
-     //   saveSharedPreferencesString(SET_LANGUAGE,"");
-        Logger.setLog("Shared preferences values get cleared.", Logger.LogEnum.INFORMATION);
+    companion object {
+        private const val SHARED_PREF_NAME = "NCP_Youth"
+        const val SET_LANGUAGE = "LANGUAGE"
+        const val KEY_MOBILENO = "mobileNo"
+        const val KEY_USERID = "userId"
+        const val KEY_NAME = "name"
+        const val KEY_FNAME = "fname"
+        const val KEY_MNAME = "mname"
+        const val KEY_LNAME = "lname"
+        const val KEY_EMAIL = "email"
+        const val KEY_DISTRICT_ID = "districtId"
+        const val KEY_KK_DISTRICT_ID = "kk_districtId"
+        const val KEY_TALUKA_ID = "talukaId"
+        const val KEY_KK_TALUKA_ID = "kk_talukaId"
+        const val KEY_VILLAGE_ID = "villageId"
+        const val KEY_KK_VILLAGE_ID = "kk_villageId"
+        const val KEY_CITY_ID = "cityId"
+        const val KEY_KK_CITY_ID = "kk_cityId"
+        const val KEY_STATE_ID = "stateId"
+        const val KEY_DISTRICT = "district"
+        const val KEY_TALUKA = "taluka"
+        const val KEY_VILLAGE = "village"
+        const val KEY_STATE = "state"
+        const val KEY_LOGIN_STATUS = "loginStatus"
+        const val KEY_APP_ID = "AppId"
+        const val KEY_ADDRESS = "address"
+        const val KEY_PROFILE_PHOTO = "profilePhoto"
+        const val KEY_FCM_TOKEN = "fcmToken"
+        const val KEY_ACTIVITY_ID = "C_ActivityId"
+        const val KEY_LOGIN_STATUS_STATE = "loginState"
+        const val KEY_IS_NEW = "isNew"
+        const val KEY_CONSTITUENCY_ID = "constituency"
+        const val KEY_CONSTITUENCY_NAME = "constituencyName"
+        const val KEY_RURAL_URBAN = "ruralUrban"
+        const val KEY_GENDER = "gender"
+        const val KEY_CITY_NAME = "cityName"
+        const val LOCAL_PROF_IMG = "localProfImg"
     }
 }

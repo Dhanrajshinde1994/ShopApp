@@ -1,96 +1,67 @@
-package com.shindefirm.shopapp.modal;
+package com.shindefirm.shopapp.modal
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
+import android.os.Parcel
+import android.os.Parcelable.Creator
+import com.shindefirm.shopapp.modal.GeneralSettingModel
 
-import com.google.gson.annotations.SerializedName;
-
-public class GeneralSettingModel implements Parcelable {
+class GeneralSettingModel : Parcelable {
     //Response: {"data":"0","data1": [{"IsAppBlock":1,"AppId":1,"UserId":1}] }
     @SerializedName("IsAppBlock")
-    private int isAppBlock;
+    var isAppBlock: Int
+
     @SerializedName("AppId")
-    private int appId;
+    var appId: Int
+
     @SerializedName("UserId")
-    private String userId;
+    var userId: String?
+
     @SerializedName("ReceiverId")
-    private String receiverId;
+    var receiverId: String?
 
-    public GeneralSettingModel() {
-        isAppBlock = 0;
-        appId = 0;
-        userId = "";
-        receiverId = "";
+    constructor() {
+        isAppBlock = 0
+        appId = 0
+        userId = ""
+        receiverId = ""
     }
 
-    public GeneralSettingModel(int isAppBlock, int appId, String userId, String receiverId) {
-        this.isAppBlock = isAppBlock;
-        this.appId = appId;
-        this.userId = userId;
-        this.receiverId = receiverId;
+    constructor(isAppBlock: Int, appId: Int, userId: String?, receiverId: String?) {
+        this.isAppBlock = isAppBlock
+        this.appId = appId
+        this.userId = userId
+        this.receiverId = receiverId
     }
 
-    protected GeneralSettingModel(Parcel in) {
-        isAppBlock = in.readInt();
-        appId = in.readInt();
-        userId = in.readString();
-        receiverId = in.readString();
+    protected constructor(`in`: Parcel) {
+        isAppBlock = `in`.readInt()
+        appId = `in`.readInt()
+        userId = `in`.readString()
+        receiverId = `in`.readString()
     }
 
-    public static final Creator<GeneralSettingModel> CREATOR = new Creator<GeneralSettingModel>() {
-        @Override
-        public GeneralSettingModel createFromParcel(Parcel in) {
-            return new GeneralSettingModel(in);
+    override fun describeContents(): Int {
+        return hashCode()
+    }
+
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeInt(isAppBlock)
+        dest.writeInt(appId)
+        dest.writeString(userId)
+        dest.writeString(receiverId)
+    }
+
+    companion object {
+        @JvmField
+        val CREATOR: Creator<GeneralSettingModel?> = object : Creator<GeneralSettingModel?> {
+            override fun createFromParcel(`in`: Parcel): GeneralSettingModel? {
+                return GeneralSettingModel(`in`)
+            }
+
+            override fun newArray(size: Int): Array<GeneralSettingModel?> {
+                return arrayOfNulls(size)
+            }
         }
-
-        @Override
-        public GeneralSettingModel[] newArray(int size) {
-            return new GeneralSettingModel[size];
-        }
-    };
-
-    public int getIsAppBlock() {
-        return isAppBlock;
-    }
-
-    public void setIsAppBlock(int isAppBlock) {
-        this.isAppBlock = isAppBlock;
-    }
-
-    public int getAppId() {
-        return appId;
-    }
-
-    public void setAppId(int appId) {
-        this.appId = appId;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getReceiverId() {
-        return receiverId;
-    }
-
-    public void setReceiverId(String receiverId) {
-        this.receiverId = receiverId;
-    }
-
-    @Override
-    public int describeContents() {
-        return hashCode();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(isAppBlock);
-        dest.writeInt(appId);
-        dest.writeString(userId);
-        dest.writeString(receiverId);
     }
 }

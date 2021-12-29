@@ -1,6 +1,6 @@
-package com.shindefirm.shopapp.listeners;
+package com.shindefirm.shopapp.listeners
 
-public interface NoticeDialogListener {
-    public void onDialogPositiveClick();
-    public void onDialogNegativeClick();
+interface NoticeDialogListener {
+    fun onDialogPositiveClick()
+    fun onDialogNegativeClick()
 }

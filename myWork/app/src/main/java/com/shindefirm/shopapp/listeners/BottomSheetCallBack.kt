@@ -1,5 +1,5 @@
-package com.shindefirm.shopapp.listeners;
+package com.shindefirm.shopapp.listeners
 
-public interface BottomSheetCallBack {
-    public void callbackMethod();
+interface BottomSheetCallBack {
+    fun callbackMethod()
 }

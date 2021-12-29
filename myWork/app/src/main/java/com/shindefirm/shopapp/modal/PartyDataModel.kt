@@ -1,89 +1,66 @@
-package com.shindefirm.shopapp.modal;
+package com.shindefirm.shopapp.modal
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
+import android.os.Parcel
+import android.os.Parcelable.Creator
+import com.shindefirm.shopapp.modal.PartyDataModel
 
-import com.google.gson.annotations.SerializedName;
-
-public class PartyDataModel implements Parcelable {
+class PartyDataModel : Parcelable {
     //    "Id": 1,
-//            "PartyName": "Nationalist Congress Party",
-//            "PartyShortCode": "NCP"
+    //            "PartyName": "Nationalist Congress Party",
+    //            "PartyShortCode": "NCP"
     @SerializedName("Id")
-    private String id;
+    var id: String?
+
     @SerializedName("PartyName")
-    private String partyName;
+    var partyName: String
+
     @SerializedName("PartyShortCode")
-    private String partyShortCode;
+    var partyShortCode: String?
 
-    public PartyDataModel() {
-        this.id = "";
-        this.partyName = "";
-        this.partyShortCode = "";
+    constructor() {
+        id = ""
+        partyName = ""
+        partyShortCode = ""
     }
 
-    public PartyDataModel(String id, String partyName, String partyShortCode) {
-        this.id = id;
-        this.partyName = partyName;
-        this.partyShortCode = partyShortCode;
+    constructor(id: String?, partyName: String, partyShortCode: String?) {
+        this.id = id
+        this.partyName = partyName
+        this.partyShortCode = partyShortCode
     }
 
-    protected PartyDataModel(Parcel in) {
-        id = in.readString();
-        partyName = in.readString();
-        partyShortCode = in.readString();
+    protected constructor(`in`: Parcel) {
+        id = `in`.readString()
+        partyName = `in`.readString()!!
+        partyShortCode = `in`.readString()
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeString(partyName);
-        dest.writeString(partyShortCode);
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeString(id)
+        dest.writeString(partyName)
+        dest.writeString(partyShortCode)
     }
 
-    @Override
-    public int describeContents() {
-        return hashCode();
+    override fun describeContents(): Int {
+        return hashCode()
     }
 
-    public static final Creator<PartyDataModel> CREATOR = new Creator<PartyDataModel>() {
-        @Override
-        public PartyDataModel createFromParcel(Parcel in) {
-            return new PartyDataModel(in);
+    override fun toString(): String {
+        return partyName
+    }
+
+    companion object {
+        @JvmField
+        val CREATOR: Creator<PartyDataModel?> = object : Creator<PartyDataModel?> {
+            override fun createFromParcel(`in`: Parcel): PartyDataModel? {
+                return PartyDataModel(`in`)
+            }
+
+            override fun newArray(size: Int): Array<PartyDataModel?> {
+                return arrayOfNulls(size)
+            }
         }
-
-        @Override
-        public PartyDataModel[] newArray(int size) {
-            return new PartyDataModel[size];
-        }
-    };
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getPartyName() {
-        return partyName;
-    }
-
-    public void setPartyName(String partyName) {
-        this.partyName = partyName;
-    }
-
-    public String getPartyShortCode() {
-        return partyShortCode;
-    }
-
-    public void setPartyShortCode(String partyShortCode) {
-        this.partyShortCode = partyShortCode;
-    }
-
-    @Override
-    public String toString() {
-        return partyName;
     }
 }

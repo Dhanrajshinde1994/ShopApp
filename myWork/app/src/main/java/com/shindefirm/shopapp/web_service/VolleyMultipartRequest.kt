@@ -1,29 +1,20 @@
-package com.shindefirm.shopapp.web_service;
+package com.shindefirm.shopapp.web_service
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.*
+import kotlin.Throws
+import com.shindefirm.shopapp.web_service.VolleyMultipartRequest.DataPart
+import com.android.volley.toolbox.HttpHeaderParser
+import java.io.*
+import java.lang.Exception
+import java.lang.RuntimeException
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Map;
-
-public class VolleyMultipartRequest extends Request<NetworkResponse> {
-
-    private final String twoHyphens = "--";
-    private final String lineEnd = "\r\n";
-    private final String boundary = "apiclient-" + System.currentTimeMillis();
-
-    private final Response.Listener<NetworkResponse> mListener;
-    private final Response.ErrorListener mErrorListener;
-    private Map<String, String> mHeaders;
+open class VolleyMultipartRequest : Request<NetworkResponse> {
+    private val twoHyphens = "--"
+    private val lineEnd = "\r\n"
+    private val boundary = "apiclient-" + System.currentTimeMillis()
+    private val mListener: Response.Listener<NetworkResponse>
+    private val mErrorListener: Response.ErrorListener
+    private var mHeaders: Map<String, String>? = null
 
     /**
      * Default constructor with predefined header and post method.
@@ -33,14 +24,14 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
      * @param listener      on success achieved 200 code from request
      * @param errorListener on error http or library timeout
      */
-
-    public VolleyMultipartRequest(String url, Map<String, String> headers,
-                                  Response.Listener<NetworkResponse> listener,
-                                  Response.ErrorListener errorListener) {
-        super(Method.POST, url, errorListener);
-        this.mListener = listener;
-        this.mErrorListener = errorListener;
-        this.mHeaders = headers;
+    constructor(
+        url: String?, headers: Map<String, String>?,
+        listener: Response.Listener<NetworkResponse>,
+        errorListener: Response.ErrorListener
+    ) : super(Method.POST, url, errorListener) {
+        mListener = listener
+        this.mErrorListener = errorListener
+        mHeaders = headers
     }
 
     /**
@@ -51,51 +42,48 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
      * @param listener      on success event handler
      * @param errorListener on error event handler
      */
-
-    public VolleyMultipartRequest(int method, String url,
-                                  Response.Listener<NetworkResponse> listener,
-                                  Response.ErrorListener errorListener) {
-        super(method, url, errorListener);
-        this.mListener = listener;
-        this.mErrorListener = errorListener;
+    constructor(
+        method: Int, url: String?,
+        listener: Response.Listener<NetworkResponse>,
+        errorListener: Response.ErrorListener
+    ) : super(method, url, errorListener) {
+        mListener = listener
+        this.mErrorListener = errorListener
     }
 
-    @Override
-    public Map<String, String> getHeaders() throws AuthFailureError {
-        return (mHeaders != null) ? mHeaders : super.getHeaders();
+    @Throws(AuthFailureError::class)
+    override fun getHeaders(): Map<String, String> {
+        return if (mHeaders != null) mHeaders!! else super.getHeaders()
     }
 
-    @Override
-    public String getBodyContentType() {
-        return "multipart/form-data;boundary=" + boundary;
+    override fun getBodyContentType(): String {
+        return "multipart/form-data;boundary=$boundary"
     }
 
-    @Override
-    public byte[] getBody() throws AuthFailureError {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(bos);
-
+    @Throws(AuthFailureError::class)
+    override fun getBody(): ByteArray {
+        val bos = ByteArrayOutputStream()
+        val dos = DataOutputStream(bos)
         try {
             // populate text payload
-            Map<String, String> params = getParams();
-            if (params != null && params.size() > 0) {
-                textParse(dos, params, getParamsEncoding());
+            val params = params
+            if (params != null && params.size > 0) {
+                textParse(dos, params, paramsEncoding)
             }
 
             // populate data byte payload
-            Map<String, DataPart> data = getByteData();
-            if (data != null && data.size() > 0) {
-                dataParse(dos, data);
+            val data = byteData
+            if (data != null && data.size > 0) {
+                dataParse(dos, data)
             }
 
             // close multipart form data after text and file data
-            dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-
-            return bos.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
+            dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd)
+            return bos.toByteArray()
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
-        return null;
+        return bos.toByteArray()
     }
 
     /**
@@ -104,30 +92,27 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
      * @return Map data part label with data byte
      * @throws AuthFailureError
      */
+    @get:Throws(AuthFailureError::class)
+    protected open val byteData: Map<String, DataPart>?
+        protected get() = null
 
-    protected Map<String, DataPart> getByteData() throws AuthFailureError {
-        return null;
-    }
-
-    @Override
-    protected Response<NetworkResponse> parseNetworkResponse(NetworkResponse response) {
-        try {
-            return Response.success(
-                    response,
-                    HttpHeaderParser.parseCacheHeaders(response));
-        } catch (Exception e) {
-            return Response.error(new ParseError(e));
+    override fun parseNetworkResponse(response: NetworkResponse): Response<NetworkResponse> {
+        return try {
+            Response.success(
+                response,
+                HttpHeaderParser.parseCacheHeaders(response)
+            )
+        } catch (e: Exception) {
+            Response.error(ParseError(e))
         }
     }
 
-    @Override
-    protected void deliverResponse(NetworkResponse response) {
-        mListener.onResponse(response);
+    override fun deliverResponse(response: NetworkResponse) {
+        mListener.onResponse(response)
     }
 
-    @Override
-    public void deliverError(VolleyError error) {
-        mErrorListener.onErrorResponse(error);
+    override fun deliverError(error: VolleyError) {
+        mErrorListener.onErrorResponse(error)
     }
 
     /**
@@ -138,14 +123,18 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
      * @param encoding         encode the inputs, default UTF-8
      * @throws IOException
      */
-
-    private void textParse(DataOutputStream dataOutputStream, Map<String, String> params, String encoding) throws IOException {
+    @Throws(IOException::class)
+    private fun textParse(
+        dataOutputStream: DataOutputStream,
+        params: Map<String, String>,
+        encoding: String
+    ) {
         try {
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                buildTextPart(dataOutputStream, entry.getKey(), entry.getValue());
+            for ((key, value) in params) {
+                buildTextPart(dataOutputStream, key, value)
             }
-        } catch (UnsupportedEncodingException uee) {
-            throw new RuntimeException("Encoding not supported: " + encoding, uee);
+        } catch (uee: UnsupportedEncodingException) {
+            throw RuntimeException("Encoding not supported: $encoding", uee)
         }
     }
 
@@ -156,10 +145,10 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
      * @param data             loop through data
      * @throws IOException
      */
-
-    private void dataParse(DataOutputStream dataOutputStream, Map<String, DataPart> data) throws IOException {
-        for (Map.Entry<String, DataPart> entry : data.entrySet()) {
-            buildDataPart(dataOutputStream, entry.getValue(), entry.getKey());
+    @Throws(IOException::class)
+    private fun dataParse(dataOutputStream: DataOutputStream, data: Map<String, DataPart>) {
+        for ((key, value) in data) {
+            buildDataPart(dataOutputStream, value, key)
         }
     }
 
@@ -171,13 +160,17 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
      * @param parameterValue   value of input
      * @throws IOException
      */
-
-    private void buildTextPart(DataOutputStream dataOutputStream, String parameterName, String parameterValue) throws IOException {
-        dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
-        dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"" + parameterName + "\"" + lineEnd);
+    @Throws(IOException::class)
+    private fun buildTextPart(
+        dataOutputStream: DataOutputStream,
+        parameterName: String,
+        parameterValue: String
+    ) {
+        dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd)
+        dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"$parameterName\"$lineEnd")
         //dataOutputStream.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
-        dataOutputStream.writeBytes(lineEnd);
-        dataOutputStream.writeBytes(parameterValue + lineEnd);
+        dataOutputStream.writeBytes(lineEnd)
+        dataOutputStream.writeBytes(parameterValue + lineEnd)
     }
 
     /**
@@ -188,54 +181,78 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
      * @param inputName        name of data input
      * @throws IOException
      */
-
-    private void buildDataPart(DataOutputStream dataOutputStream, DataPart dataFile, String inputName) throws IOException {
-        dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
-        dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"" +
-                inputName + "\"; filename=\"" + dataFile.getFileName() + "\"" + lineEnd);
-        if (dataFile.getType() != null && !dataFile.getType().trim().isEmpty()) {
-            dataOutputStream.writeBytes("Content-Type: " + dataFile.getType() + lineEnd);
-
+    @Throws(IOException::class)
+    private fun buildDataPart(
+        dataOutputStream: DataOutputStream,
+        dataFile: DataPart,
+        inputName: String
+    ) {
+        dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd)
+        dataOutputStream.writeBytes(
+            "Content-Disposition: form-data; name=\"" +
+                    inputName + "\"; filename=\"" + dataFile.fileName + "\"" + lineEnd
+        )
+        if (dataFile.type != null && !dataFile.type!!.trim { it <= ' ' }.isEmpty()) {
+            dataOutputStream.writeBytes("Content-Type: " + dataFile.type + lineEnd)
         }
-        dataOutputStream.writeBytes(lineEnd);
-
-
-        ByteArrayInputStream fileInputStream = new ByteArrayInputStream(dataFile.getContent());
-        int bytesAvailable = fileInputStream.available();
-
-        int maxBufferSize = 1024 * 1024;
-        int bufferSize = Math.min(bytesAvailable, maxBufferSize);
-        byte[] buffer = new byte[bufferSize];
-
-        int bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-
+        dataOutputStream.writeBytes(lineEnd)
+        val fileInputStream = ByteArrayInputStream(dataFile.content)
+        var bytesAvailable = fileInputStream.available()
+        val maxBufferSize = 1024 * 1024
+        var bufferSize = Math.min(bytesAvailable, maxBufferSize)
+        val buffer = ByteArray(bufferSize)
+        var bytesRead = fileInputStream.read(buffer, 0, bufferSize)
         while (bytesRead > 0) {
-            dataOutputStream.write(buffer, 0, bufferSize);
-            bytesAvailable = fileInputStream.available();
-            bufferSize = Math.min(bytesAvailable, maxBufferSize);
-            bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+            dataOutputStream.write(buffer, 0, bufferSize)
+            bytesAvailable = fileInputStream.available()
+            bufferSize = Math.min(bytesAvailable, maxBufferSize)
+            bytesRead = fileInputStream.read(buffer, 0, bufferSize)
         }
-
-        dataOutputStream.writeBytes(lineEnd);
-
+        dataOutputStream.writeBytes(lineEnd)
     }
-
 
     /**
      * Simple data container use for passing byte file
      */
-
-    public class DataPart {
-        private String fileName;
-        private byte[] content;
-        private String type;
+    inner class DataPart {
+        /**
+         * Getter file name.
+         *
+         * @return file name
+         */
+        /**
+         * Setter file name.
+         *
+         * @param fileName string file name
+         */
+        var fileName: String? = null
+        /**
+         * Getter content.
+         *
+         * @return byte file data
+         */
+        /**
+         * Setter content.
+         *
+         * @param content byte file data
+         */
+        lateinit var content: ByteArray
+        /**
+         * Getter mime type.
+         *
+         * @return mime type
+         */
+        /**
+         * Setter mime type.
+         *
+         * @param type mime type
+         */
+        var type: String? = null
 
         /**
          * Default data part
          */
-
-        public DataPart() {
-        }
+        constructor() {}
 
         /**
          * Constructor with data.
@@ -243,10 +260,9 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
          * @param name label of data
          * @param data byte data
          */
-
-        public DataPart(String name, byte[] data) {
-            fileName = name;
-            content = data;
+        constructor(name: String?, data: ByteArray) {
+            fileName = name
+            content = data
         }
 
         /**
@@ -256,71 +272,10 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
          * @param data     byte data
          * @param mimeType mime data like "image/jpeg"
          */
-
-        public DataPart(String name, byte[] data, String mimeType) {
-            fileName = name;
-            content = data;
-            type = mimeType;
-        }
-
-        /**
-         * Getter file name.
-         *
-         * @return file name
-         */
-
-        public String getFileName() {
-            return fileName;
-        }
-
-        /**
-         * Setter file name.
-         *
-         * @param fileName string file name
-         */
-
-        public void setFileName(String fileName) {
-            this.fileName = fileName;
-        }
-
-        /**
-         * Getter content.
-         *
-         * @return byte file data
-         */
-
-        public byte[] getContent() {
-            return content;
-        }
-
-        /**
-         * Setter content.
-         *
-         * @param content byte file data
-         */
-
-        public void setContent(byte[] content) {
-            this.content = content;
-        }
-
-        /**
-         * Getter mime type.
-         *
-         * @return mime type
-         */
-
-        public String getType() {
-            return type;
-        }
-
-        /**
-         * Setter mime type.
-         *
-         * @param type mime type
-         */
-
-        public void setType(String type) {
-            this.type = type;
+        constructor(name: String?, data: ByteArray, mimeType: String?) {
+            fileName = name
+            content = data
+            type = mimeType
         }
     }
 }

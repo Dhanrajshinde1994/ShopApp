@@ -1,58 +1,49 @@
-package com.shindefirm.shopapp.modal;
+package com.shindefirm.shopapp.modal
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
+import android.os.Parcel
+import android.os.Parcelable.Creator
+import com.shindefirm.shopapp.modal.SliderImageModel
 
-import com.google.gson.annotations.SerializedName;
-
-public class SliderImageModel implements Parcelable {
+class SliderImageModel : Parcelable {
     @SerializedName("SliderImage")
-    private String sliderImagePath;
+    var sliderImagePath: String
 
-    public SliderImageModel() {
-        sliderImagePath = "";
+    constructor() {
+        sliderImagePath = ""
     }
 
-    public SliderImageModel(String sliderImagePath) {
-        this.sliderImagePath = sliderImagePath;
+    constructor(sliderImagePath: String) {
+        this.sliderImagePath = sliderImagePath
     }
 
-    protected SliderImageModel(Parcel in) {
-        sliderImagePath = in.readString();
+    protected constructor(`in`: Parcel) {
+        sliderImagePath = `in`.readString()!!
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(sliderImagePath);
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeString(sliderImagePath)
     }
 
-    @Override
-    public int describeContents() {
-        return hashCode();
+    override fun describeContents(): Int {
+        return hashCode()
     }
 
-    public static final Creator<SliderImageModel> CREATOR = new Creator<SliderImageModel>() {
-        @Override
-        public SliderImageModel createFromParcel(Parcel in) {
-            return new SliderImageModel(in);
+    override fun toString(): String {
+        return sliderImagePath
+    }
+
+    companion object {
+        @JvmField
+        val CREATOR: Creator<SliderImageModel?> = object : Creator<SliderImageModel?> {
+            override fun createFromParcel(`in`: Parcel): SliderImageModel? {
+                return SliderImageModel(`in`)
+            }
+
+            override fun newArray(size: Int): Array<SliderImageModel?> {
+                return arrayOfNulls(size)
+            }
         }
-
-        @Override
-        public SliderImageModel[] newArray(int size) {
-            return new SliderImageModel[size];
-        }
-    };
-
-    public String getSliderImagePath() {
-        return sliderImagePath;
-    }
-
-    public void setSliderImagePath(String sliderImagePath) {
-        this.sliderImagePath = sliderImagePath;
-    }
-
-    @Override
-    public String toString() {
-        return sliderImagePath;
     }
 }

@@ -1,72 +1,56 @@
-package com.shindefirm.shopapp.modal;
+package com.shindefirm.shopapp.modal
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
+import android.os.Parcel
+import android.os.Parcelable.Creator
+import com.shindefirm.shopapp.modal.CategoryModel
 
-import com.google.gson.annotations.SerializedName;
-
-public class CategoryModel implements Parcelable {
+class CategoryModel : Parcelable {
     @SerializedName("Id")
-    private String id;
+    var id: String?
+
     @SerializedName("Category")
-    private String category;
+    var category: String
 
-    public CategoryModel() {
-        id = "";
-        category = "";
+    constructor() {
+        id = ""
+        category = ""
     }
 
-    public CategoryModel(String id, String category) {
-        this.id = id;
-        this.category = category;
+    constructor(id: String?, category: String) {
+        this.id = id
+        this.category = category
     }
 
-    protected CategoryModel(Parcel in) {
-        id = in.readString();
-        category = in.readString();
+    protected constructor(`in`: Parcel) {
+        id = `in`.readString()
+        category = `in`.readString()!!
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeString(category);
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeString(id)
+        dest.writeString(category)
     }
 
-    @Override
-    public int describeContents() {
-        return hashCode();
+    override fun describeContents(): Int {
+        return hashCode()
     }
 
-    public static final Creator<CategoryModel> CREATOR = new Creator<CategoryModel>() {
-        @Override
-        public CategoryModel createFromParcel(Parcel in) {
-            return new CategoryModel(in);
+    override fun toString(): String {
+        return category
+    }
+
+    companion object {
+        @JvmField
+        val CREATOR: Creator<CategoryModel?> = object : Creator<CategoryModel?> {
+            override fun createFromParcel(`in`: Parcel): CategoryModel? {
+                return CategoryModel(`in`)
+            }
+
+            override fun newArray(size: Int): Array<CategoryModel?> {
+                return arrayOfNulls(size)
+            }
         }
-
-        @Override
-        public CategoryModel[] newArray(int size) {
-            return new CategoryModel[size];
-        }
-    };
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    @Override
-    public String toString() {
-        return category;
     }
 }

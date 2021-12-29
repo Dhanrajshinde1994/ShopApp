@@ -1,62 +1,33 @@
-package com.shindefirm.shopapp.modal;
+package com.shindefirm.shopapp.modal
 
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.SerializedName
+import com.shindefirm.shopapp.modal.ProfileResponse
+import java.util.ArrayList
 
-import java.util.ArrayList;
-
-public class ResponseWrapperModel {
+class ResponseWrapperModel {
     //{"data":"0","data1": [{"ID":12,"Msg":"Data Saved Successfully"}] }
     @SerializedName("data")
-    private String dataState;
+    var dataState: String
+
     @SerializedName("data1")
-    private ArrayList<ProfileResponse> responseList;
+    var responseList: ArrayList<ProfileResponse>
 
     // This fields are internally used.
-    private String ordinalName;
-    private String errorMessage;
+    var ordinalName: String? = null
+    var errorMessage: String? = null
 
-    public ResponseWrapperModel() {
-        this.dataState = "";
-        this.responseList = new ArrayList<>();
-        this.ordinalName = "";
-        this.errorMessage = "";
+    constructor() {
+        dataState = ""
+        responseList = ArrayList()
+        ordinalName = ""
+        errorMessage = ""
     }
 
-    public ResponseWrapperModel(String dataState,
-                                ArrayList<ProfileResponse> responseList) {
-        this.dataState = dataState;
-        this.responseList = responseList;
-    }
-
-    public String getDataState() {
-        return dataState;
-    }
-
-    public void setDataState(String dataState) {
-        this.dataState = dataState;
-    }
-
-    public ArrayList<ProfileResponse> getResponseList() {
-        return responseList;
-    }
-
-    public void setResponseList(ArrayList<ProfileResponse> responseList) {
-        this.responseList = responseList;
-    }
-
-    public String getOrdinalName() {
-        return ordinalName;
-    }
-
-    public void setOrdinalName(String ordinalName) {
-        this.ordinalName = ordinalName;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    constructor(
+        dataState: String,
+        responseList: ArrayList<ProfileResponse>
+    ) {
+        this.dataState = dataState
+        this.responseList = responseList
     }
 }
