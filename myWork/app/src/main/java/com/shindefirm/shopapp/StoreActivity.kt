@@ -5,9 +5,16 @@ import android.app.DatePickerDialog
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.Surface
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.camera.core.AspectRatio
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +25,11 @@ import com.budiyev.android.codescanner.CodeScannerView
 import com.budiyev.android.codescanner.DecodeCallback
 import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
+import com.google.android.gms.tasks.Task
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.Text
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.shindefirm.shopapp.adapter.ProductAdapter
 import com.shindefirm.shopapp.adapter.StoreAdapter
 import com.shindefirm.shopapp.database.AppDatabase
@@ -25,34 +37,52 @@ import com.shindefirm.shopapp.database.modal.NewProduct
 import com.shindefirm.shopapp.database.modal.StoreProductList
 import com.shindefirm.shopapp.util.AppUtils
 import com.shindefirm.shopapp.util.Logger
+import com.shindefirm.shopapp.util.TextReaderAnalyzer
+import kotlinx.android.synthetic.main.activity_store.*
 import tech.hibk.searchablespinnerlibrary.SearchableItem
 import tech.hibk.searchablespinnerlibrary.SearchableSpinner
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import javax.xml.datatype.DatatypeConstants.MONTHS
 import kotlin.collections.ArrayList
 
 class StoreActivity : AppCompatActivity() {
 
+    private val TAG: String?="StoreActivity"
     var db: AppDatabase?=null
+    var isCameraStart:Boolean=true
     var toolbar:androidx.appcompat.widget.Toolbar?=null
-
+//    var cameraPreviewView:Surface?=null
     private lateinit var codeScanner: CodeScanner
     private var etMfgDate:EditText?=null
     private var etExpDate:EditText?=null
     private var etPQuant:EditText?=null
-//    private var atvPName:AutoCompleteTextView?=null
+    private var atvPName:AutoCompleteTextView?=null
     private var sspProduct:SearchableSpinner?=null
     private var tvPBarcode:TextView?=null
     private var etProductPrice:EditText?=null
     private var btnAddStore:Button?=null
+    private var startTextRecog:Button?=null
+    private var endTextRecog:Button?=null
     private var rvStoreDetail:RecyclerView?=null
     var storeAdapter:StoreAdapter?=null
     var storeList=ArrayList<StoreProductList>();
     var newProductList=ArrayList<NewProduct>();
 
-
-
+    private val cameraExecutor: ExecutorService by lazy { Executors.newSingleThreadExecutor() }
+    private val imageAnalyzer by lazy {
+        ImageAnalysis.Builder()
+            .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+            .build()
+            .also {
+                it.setAnalyzer(
+                    cameraExecutor,
+                    TextReaderAnalyzer(::onTextFound)
+                )
+            }
+    }
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,11 +90,11 @@ class StoreActivity : AppCompatActivity() {
 
         initControls()
         fillRecycleDataData()
-        btnAddStore?.setOnClickListener(){
+        btnAddStore?.setOnClickListener {
 
             if(validateForm())
             {
-                var pName:String=if(sspProduct?.selectedItem?.title.toString().isEmpty()) "" else sspProduct?.selectedItem?.title.toString()
+                var pName:String=if(atvPName?.text.toString().isEmpty()) "" else atvPName?.text.toString()
                 var pPrice:Double=if(etProductPrice?.text.toString().isEmpty()) 0.0 else etProductPrice?.text.toString().toDouble()
                 var pQuant:Int=if(etPQuant?.text.toString().isEmpty()) 0 else etPQuant?.text.toString().toInt()
                 var pMfgDate:String=if(etMfgDate?.text.toString().isEmpty()) "" else etMfgDate?.text.toString()
@@ -72,17 +102,17 @@ class StoreActivity : AppCompatActivity() {
                 var pBarcode:String=if(tvPBarcode?.text.toString().isEmpty()) "" else tvPBarcode?.text.toString()
 
                 db?.storeProductList()?.insertStoreProductList(StoreProductList(pName,pBarcode,pQuant,pPrice,pMfgDate,pExpDate,SimpleDateFormat("dd-MM-yyyy").format(Date())))
-                db?.productStock()?.updateProductStockByPName(pName,pQuant)
+                db?.productStock()?.updateProductStockByPName(pName,pQuant,pPrice)
 
                 fillRecycleDataData()
                 clearFields()
-//                atvPName?.focusable
+               atvPName?.focusable
             }
 
 
         }
+        startCamera()
     }
-
 
 
     private fun initControls() {
@@ -107,12 +137,15 @@ class StoreActivity : AppCompatActivity() {
         etMfgDate=findViewById(R.id.etMfgDate)
         etExpDate=findViewById(R.id.etExpDate)
         etPQuant=findViewById(R.id.etPQuant)
-//        atvPName=findViewById(R.id.atvPName)
+        atvPName=findViewById(R.id.atvPName)
         sspProduct=findViewById(R.id.sspProduct)
         tvPBarcode=findViewById(R.id.tvPBarcode)
         etProductPrice=findViewById(R.id.etProductPrice)
         btnAddStore=findViewById(R.id.btnAddStore)
         rvStoreDetail=findViewById(R.id.rvStoreDetail)
+        startTextRecog=findViewById(R.id.startTextRecog)
+        endTextRecog=findViewById(R.id.endTextRecog)
+//        cameraPreviewView=findViewById(R.id.cameraPreviewView)
 
         codeScanner = CodeScanner(this, scannerView)
 
@@ -194,13 +227,17 @@ class StoreActivity : AppCompatActivity() {
         newProductList= db?.newProduct()?.getAllNewProducts() as ArrayList<NewProduct>
 
         var strList=ArrayList<SearchableItem>()
-        var i=0;
+        var strPName=ArrayList<String>()
+        var i=0
         for (s in newProductList)
         {
             strList.add(SearchableItem(i.toLong(),s.title))
+            strPName.add(s.title)
             i++
         }
         strList.add(0,SearchableItem(0,resources.getString(R.string.str_product_name)))
+        atvPName?.setAdapter(ArrayAdapter(this,android.R.layout.simple_list_item_1,strPName))
+        atvPName?.threshold=1
         sspProduct?.items=strList
 
         sspProduct?.onItemSelectedListener=object :AdapterView.OnItemSelectedListener{
@@ -214,7 +251,8 @@ class StoreActivity : AppCompatActivity() {
                 id: Long
             ) {
 
-                var st =sspProduct?.selectedItem?.title
+//                var st =sspProduct?.selectedItem?.title
+                var st =atvPName?.text
 
                 var pr=db?.newProduct()?.getNewProductsPrice(st.toString())
 
@@ -223,8 +261,54 @@ class StoreActivity : AppCompatActivity() {
             }
         }
 
+        startTextRecog?.setOnClickListener {
+           isCameraStart=true
+        }
+
+        endTextRecog?.setOnClickListener {
+            isCameraStart=false
+        }
+
     }
 
+    private fun startCamera() {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+        cameraProviderFuture.addListener(
+            Runnable {
+                val preview = Preview.Builder()
+                    .build()
+                    .also { it.setSurfaceProvider(cameraPreviewView.surfaceProvider) }
+                cameraProviderFuture.get().bind(preview, imageAnalyzer)
+            },
+            ContextCompat.getMainExecutor(this)
+        )
+    }
+
+    private fun ProcessCameraProvider.bind(
+        preview: Preview,
+        imageAnalyzer: ImageAnalysis
+    ) = try {
+        unbindAll()
+        bindToLifecycle(
+            this@StoreActivity,
+            CameraSelector.DEFAULT_BACK_CAMERA,
+            preview,
+            imageAnalyzer
+        )
+    } catch (ise: IllegalStateException) {
+        // Thrown if binding is not done from the main thread
+        Log.e(TAG, "Binding failed", ise)
+    }
+
+    private fun onTextFound(foundText: String)  {
+        if(isCameraStart) {
+            Log.d(TAG, " We got new text: $foundText")
+//            Logger.showToast(this, foundText, true)
+            atvPName?.setText(foundText)
+            atvPName?.showDropDown()
+            isCameraStart=false
+        }
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun fillRecycleDataData() {
@@ -236,7 +320,7 @@ class StoreActivity : AppCompatActivity() {
     }
 
     private fun clearFields() {
-//        atvPName?.setText("")
+        atvPName?.setText("")
         sspProduct?.setSelection(0)
         tvPBarcode?.setText("")
         etProductPrice?.setText("")
@@ -249,7 +333,7 @@ class StoreActivity : AppCompatActivity() {
     private fun validateForm(): Boolean {
 
         var isValid=false
-        if(sspProduct?.selectedItem?.title.toString().equals(resources.getString(R.string.str_product_name)))
+        if(atvPName?.text.toString().equals(resources.getString(R.string.str_product_name)))
         {
             Logger.showToast(this,resources.getString(R.string.strPleaseAddProductName),true)
         }
@@ -275,5 +359,11 @@ class StoreActivity : AppCompatActivity() {
     override fun onPause() {
         codeScanner.releaseResources()
         super.onPause()
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraExecutor.shutdown()
     }
 }

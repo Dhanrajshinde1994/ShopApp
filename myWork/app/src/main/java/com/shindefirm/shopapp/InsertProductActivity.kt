@@ -5,10 +5,16 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.AspectRatio
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,8 +25,12 @@ import com.shindefirm.shopapp.database.modal.NewProduct
 import com.shindefirm.shopapp.database.modal.ProductStock
 import com.shindefirm.shopapp.util.AppUtils
 import com.shindefirm.shopapp.util.Logger
+import com.shindefirm.shopapp.util.TextReaderAnalyzer
+import kotlinx.android.synthetic.main.activity_store.*
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
 
 
@@ -28,6 +38,9 @@ class InsertProductActivity : AppCompatActivity(),View.OnClickListener {
 
     var db:AppDatabase?=null
     var btnAdd:Button?=null
+
+    private var startTextRecog:Button?=null
+    private var endTextRecog:Button?=null
     var etPName:EditText?=null
     var etPPrice:EditText?=null
     var etMfgDate:EditText?=null
@@ -39,6 +52,22 @@ class InsertProductActivity : AppCompatActivity(),View.OnClickListener {
     var newProductList=ArrayList<NewProduct>();
     var toolbar:androidx.appcompat.widget.Toolbar?=null
 
+    private val TAG: String?="InsertProductActivity"
+    var isCameraStart:Boolean=true
+
+    private val cameraExecutor: ExecutorService by lazy { Executors.newSingleThreadExecutor() }
+    private val imageAnalyzer by lazy {
+        ImageAnalysis.Builder()
+            .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+            .build()
+            .also {
+                it.setAnalyzer(
+                    cameraExecutor,
+                    TextReaderAnalyzer(::onTextFound)
+                )
+            }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_insert_product)
@@ -46,7 +75,46 @@ class InsertProductActivity : AppCompatActivity(),View.OnClickListener {
         initControls()
         fillSpinner()
         fillRecycleDataData()
+        startCamera()
 
+    }
+
+    private fun startCamera() {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+        cameraProviderFuture.addListener(
+            Runnable {
+                val preview = Preview.Builder()
+                    .build()
+                    .also { it.setSurfaceProvider(cameraPreviewView.surfaceProvider) }
+                cameraProviderFuture.get().bind(preview, imageAnalyzer)
+            },
+            ContextCompat.getMainExecutor(this)
+        )
+    }
+
+    private fun ProcessCameraProvider.bind(
+        preview: Preview,
+        imageAnalyzer: ImageAnalysis
+    ) = try {
+        unbindAll()
+        bindToLifecycle(
+            this@InsertProductActivity,
+            CameraSelector.DEFAULT_BACK_CAMERA,
+            preview,
+            imageAnalyzer
+        )
+    } catch (ise: IllegalStateException) {
+        // Thrown if binding is not done from the main thread
+        Log.e(TAG, "Binding failed", ise)
+    }
+
+    private fun onTextFound(foundText: String)  {
+        if(isCameraStart) {
+            Log.d(TAG, " We got new text: $foundText")
+//            Logger.showToast(this, foundText, true)
+            etPName?.setText(foundText)
+            isCameraStart=false
+        }
     }
 
     private fun fillRecycleDataData() {
@@ -94,6 +162,8 @@ class InsertProductActivity : AppCompatActivity(),View.OnClickListener {
         etBestBeforeDate=findViewById(R.id.etBestBeforeDate)
         spPUnit=findViewById(R.id.spPUnit)
         btnAdd=findViewById(R.id.btnAdd)
+        startTextRecog=findViewById(R.id.startTextRecog)
+        endTextRecog=findViewById(R.id.endTextRecog)
         rvProductDetail=findViewById(R.id.rvProductDetail)
 
         btnAdd?.setOnClickListener(this)
@@ -144,6 +214,14 @@ class InsertProductActivity : AppCompatActivity(),View.OnClickListener {
             dpd.show()
         }
 
+        startTextRecog?.setOnClickListener {
+            isCameraStart=true
+        }
+
+        endTextRecog?.setOnClickListener {
+            isCameraStart=false
+        }
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -168,7 +246,7 @@ class InsertProductActivity : AppCompatActivity(),View.OnClickListener {
 
                     db?.productStock()?.insertProductStock(
                         ProductStock(
-                            pName, 0, 0, 0, 0, 0,
+                            pName, 0, 0, 0, 0, 0,0.0,
                             SimpleDateFormat("dd/MM/yyyy").format(Date())
                         )
                     )

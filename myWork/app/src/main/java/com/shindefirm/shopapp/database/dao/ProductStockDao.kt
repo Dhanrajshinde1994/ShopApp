@@ -14,8 +14,8 @@ interface ProductStockDao {
     @Update
     fun updateProductStock(productStock: ProductStock)
 
-    @Query("update ProductStock set quant= :pQuant where title= :pName ")
-    fun updateProductStockByPName(pName: String,pQuant:Int)
+    @Query("update ProductStock set quant=quant+ :pQuant,latestPrice=:price where title= :pName ")
+    fun updateProductStockByPName(pName: String,pQuant:Int,price:Double)
 
     @Delete
     fun deleteProductStock(productStock: ProductStock)

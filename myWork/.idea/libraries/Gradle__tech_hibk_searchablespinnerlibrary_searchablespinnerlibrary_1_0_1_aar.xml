@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: tech.hibk.searchablespinnerlibrary:searchablespinnerlibrary:1.0.1@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9c84d59efe822f93a88969f6d8f72fc0/searchablespinnerlibrary-1.0.1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9c84d59efe822f93a88969f6d8f72fc0/searchablespinnerlibrary-1.0.1/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9c84d59efe822f93a88969f6d8f72fc0/searchablespinnerlibrary-1.0.1/res" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/tech.hibk.searchablespinnerlibrary/searchablespinnerlibrary/1.0.1/454478f24648c1465d209877e7fe7ab03ae8247c/searchablespinnerlibrary-1.0.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/tech.hibk.searchablespinnerlibrary/searchablespinnerlibrary/1.0.1/7d5c503cd297eaba3412a389ac50fd4eac77763a/searchablespinnerlibrary-1.0.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

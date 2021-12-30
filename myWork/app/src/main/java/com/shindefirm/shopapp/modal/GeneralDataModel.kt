@@ -33,7 +33,7 @@ class GeneralDataModel : Parcelable {
     var programModelList: ArrayList<ProgramModel?>?
 
     @SerializedName("data5")
-    var twitTokenModelArrayList: ArrayList<TwitTokenModel>?
+    var twitTokenModelArrayList: ArrayList<TwitTokenModel?>?
 
     constructor() {
         dataState = ""
@@ -51,7 +51,7 @@ class GeneralDataModel : Parcelable {
         partyDataList: ArrayList<PartyDataModel?>?,
         sliderImageList: ArrayList<SliderImageModel?>?,
         programModelList: ArrayList<ProgramModel?>?,
-        twitTokenModelArrayList: ArrayList<TwitTokenModel>?
+        twitTokenModelArrayList: ArrayList<TwitTokenModel?>?
     ) {
         this.dataState = dataState
         this.generalSettingList = generalSettingList
@@ -87,7 +87,7 @@ class GeneralDataModel : Parcelable {
     }
 
     override fun toString(): String {
-        return twitTokenModelArrayList!![0].tokenValue
+        return twitTokenModelArrayList!![0]?.tokenValue.toString()
     }
 
     companion object {

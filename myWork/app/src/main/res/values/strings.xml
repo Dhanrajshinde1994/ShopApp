@@ -24,4 +24,5 @@
     <string name="str_product_barcode">Barcode</string>
     <string name="strProductQuantity">Quantity</string>
     <string name="strProductPresent">Product Already Present</string>
+    <string name="strCaptureText">Capture Text</string>
 </resources>

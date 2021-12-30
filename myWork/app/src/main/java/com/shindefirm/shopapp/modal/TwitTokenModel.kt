@@ -37,7 +37,8 @@ class TwitTokenModel : Parcelable {
     }
 
     companion object {
-        val CREATOR: Creator<TwitTokenModel> = object : Creator<TwitTokenModel?> {
+        @JvmField
+        val CREATOR: Creator<TwitTokenModel?> = object : Creator<TwitTokenModel?> {
             override fun createFromParcel(`in`: Parcel): TwitTokenModel? {
                 return TwitTokenModel(`in`)
             }

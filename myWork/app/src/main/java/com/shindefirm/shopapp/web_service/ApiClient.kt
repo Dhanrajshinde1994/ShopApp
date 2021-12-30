@@ -38,15 +38,15 @@ object ApiClient {
                 generalDataModel = gson.fromJson(generalDataModelString, generalDataType)
             }
             try {
-                if (generalDataModel != null && !generalDataModel!!.twitTokenModelArrayList.isEmpty()) {
+                if (generalDataModel != null && !generalDataModel!!.twitTokenModelArrayList!!.isEmpty()) {
                     setLog("Retrofit : " + generalDataModel.toString(), Logger.LogEnum.INFORMATION)
-                    if (!generalDataModel!!.twitTokenModelArrayList[0].tokenValue.isEmpty() && generalDataModel!!.twitTokenModelArrayList[0].tokenValue != null) {
+                    if (!generalDataModel!!.twitTokenModelArrayList!![0]!!.tokenValue.isEmpty() && generalDataModel!!.twitTokenModelArrayList!![0]!!.tokenValue != null) {
                         client = OkHttpClient.Builder()
                             .addInterceptor { chain ->
                                 val newRequest = chain.request().newBuilder()
                                     .header(
                                         "Authorization",
-                                        "Bearer " + generalDataModel!!.twitTokenModelArrayList[0].tokenValue
+                                        "Bearer " + generalDataModel!!.twitTokenModelArrayList!![0]!!.tokenValue
                                     )
                                     .build()
                                 chain.proceed(newRequest)

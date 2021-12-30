@@ -3,16 +3,17 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-android-extensions'
     id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.shindefirm.shopapp"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -35,6 +36,7 @@ android {
 }
 
 dependencies {
+
     def lifecycle_version = "2.1.0"
     def room_version = "2.2.3"
 
@@ -93,5 +95,11 @@ dependencies {
 
     //Searchable Spinner
     implementation 'tech.hibk.searchablespinnerlibrary:searchablespinnerlibrary:1.0.1'
+
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:17.0.1'
+
+    implementation "androidx.camera:camera-camera2:1.1.0-alpha12"
+    implementation "androidx.camera:camera-lifecycle:1.1.0-alpha12"
+    implementation "androidx.camera:camera-view:1.0.0-alpha32"
 
 }
